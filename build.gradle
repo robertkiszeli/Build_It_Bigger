@@ -14,6 +14,26 @@ buildscript {
     }
 }
 
+task testProject {
+    dependsOn(['startDevServer','runMyTests','shutdownDevServer'])
+}
+
+task startServer {
+    dependsOn ':backend:appengineRun'
+    evaluationDependsOn(":backend")
+}
+
+task runTests {
+    dependsOn ':app:connectedAndroidTest'
+    mustRunAfter "startServer"
+}
+
+task shutdownServer {
+    dependsOn ':backend:appengineStop'
+    mustRunAfter "runTests"
+
+}
+
 allprojects {
     repositories {
         jcenter()

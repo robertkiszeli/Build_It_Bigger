@@ -1,6 +1,5 @@
 package com.udacity.gradle.builditbigger.paid;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -15,7 +14,6 @@ import java.io.IOException;
 public class EndpointAsyncTask extends AsyncTask<MainActivityFragment, Void, String> {
 
     private static MyApi myApiService = null;
-    private Context context;
 
     private MainActivityFragment mainActivityFragment;
 
@@ -40,8 +38,6 @@ public class EndpointAsyncTask extends AsyncTask<MainActivityFragment, Void, Str
         }
 
         mainActivityFragment = params[0];
-        context = mainActivityFragment.getActivity();
-
 
         try {
             return myApiService.tellJoke().execute().getData();
