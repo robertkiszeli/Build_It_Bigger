@@ -1,6 +1,5 @@
 package com.udacity.gradle.builditbigger.free;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,19 +15,19 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherInterstitialAd;
 import com.robertkiszelirk.jokecreator.ShowJokeActivity;
+import com.udacity.gradle.builditbigger.EndpointAsyncTask;
+import com.udacity.gradle.builditbigger.JokeReceived;
 import com.udacity.gradle.builditbigger.R;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements JokeReceived{
+
+    View root;
 
     ProgressBar progressBar = null;
-
-    public String loadedJoke = null;
-
-    public boolean testFlag = false;
 
     PublisherInterstitialAd publisherInterstitialAd = null;
 
@@ -60,7 +59,7 @@ public class MainActivityFragment extends Fragment {
         //Fetch ad
         requestInterstitialAd();
 
-        View root = inflater.inflate(R.layout.fragment_main, container, false);
+        root = inflater.inflate(R.layout.fragment_main, container, false);
 
         AdView mAdView = root.findViewById(R.id.adView);
         // Create an ad request. Check logcat output for the hashed device ID to
@@ -92,25 +91,24 @@ public class MainActivityFragment extends Fragment {
 
     private void getJoke() {
 
-        new EndpointAsyncTask().execute(this);
-    }
-
-    public void startShowJokeActivity() {
-        if(!testFlag) {
-            Context context = getActivity();
-            Intent intent = new Intent(context, ShowJokeActivity.class);
-            intent.putExtra(context.getString(R.string.intent_key_to_pass_joke), loadedJoke);
-            context.startActivity(intent);
-            progressBar.setVisibility(View.GONE);
-        }
+        new EndpointAsyncTask(this).execute(getContext());
     }
 
     private void requestInterstitialAd() {
         PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                //.addTestDevice("")
                 .build();
 
         publisherInterstitialAd.loadAd(adRequest);
+    }
+
+    @Override
+    public void jokeText(String joke) {
+
+        progressBar.setVisibility(View.GONE);
+        final Intent intent = new Intent(root.getContext(), ShowJokeActivity.class);
+        intent.putExtra(getString(R.string.intent_key_to_pass_joke),joke);
+        startActivity(intent);
+
     }
 }

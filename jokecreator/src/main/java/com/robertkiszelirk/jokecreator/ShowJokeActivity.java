@@ -3,6 +3,7 @@ package com.robertkiszelirk.jokecreator;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.TextView;
 
 public class ShowJokeActivity extends AppCompatActivity {
@@ -17,12 +18,17 @@ public class ShowJokeActivity extends AppCompatActivity {
         //Retrieve the joke from the Intent Extras
         String jokeResult = null;
         Intent intent = getIntent();
-        jokeResult = intent.getStringExtra(getString(R.string.intent_key_to_pass_joke));
 
-        if (jokeResult != null) {
-            textview.setText(jokeResult);
-        } else {
-            textview.setText(R.string.no_passed_joke);
+        if(intent != null) {
+            jokeResult = intent.getStringExtra(getString(R.string.intent_key_to_pass_joke));
+
+            if (TextUtils.isEmpty(jokeResult)) {
+                textview.setText(R.string.no_passed_joke);
+            } else {
+                textview.setText(jokeResult);
+            }
+        }else{
+            textview.setText(R.string.no_passed_joke_from_server);
         }
 
     }

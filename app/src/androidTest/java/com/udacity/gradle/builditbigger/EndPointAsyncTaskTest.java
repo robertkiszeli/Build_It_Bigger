@@ -1,25 +1,31 @@
 package com.udacity.gradle.builditbigger;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.udacity.gradle.builditbigger.free.EndpointAsyncTask;
-import com.udacity.gradle.builditbigger.free.MainActivityFragment;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertTrue;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(AndroidJUnit4.class)
 public class EndPointAsyncTaskTest {
 
     @Test
     public void testDoInBackground() throws Exception {
-        MainActivityFragment fragment = new MainActivityFragment();
-        fragment.testFlag = true;
-        new EndpointAsyncTask().execute(fragment);
-        Thread.sleep(5000);
-        assertTrue("Error: Fetched Joke = " + fragment.loadedJoke, fragment.loadedJoke != null);
+
+        JokeReceived jokeReceived = new JokeReceived() {
+            @Override
+            public void jokeText(String string) {
+
+            }
+        };
+
+        EndpointAsyncTask endpointAsyncTask = new EndpointAsyncTask(jokeReceived);
+        endpointAsyncTask.execute(InstrumentationRegistry.getContext());
+        String joke = endpointAsyncTask.get(5, TimeUnit.SECONDS);
+        Assert.assertNotEquals(0,joke.length());
     }
 
 }
